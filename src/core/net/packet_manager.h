@@ -35,7 +35,7 @@ namespace imshark::core::net
         std::string get_error_message();
         [[nodiscard]] bool is_last_action_error() const;
         void clear_error_message();
-        std::string set_filter(std::string filter);
+        void set_filter(const std::string& filter);
         std::vector<const u_char*> get_captured_packets();
         void clear_captured_packet_list();
 

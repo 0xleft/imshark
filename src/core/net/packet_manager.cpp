@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "pcap-int.h"
+
 namespace imshark::core::net
 {
     packet_manager* packet_manager::instance = nullptr;
@@ -30,7 +32,8 @@ namespace imshark::core::net
         }
 
         capture_handle = pcap_open_live(device.c_str(), BUFSIZ, 1, 1000, error_buf);
-        if (capture_handle == nullptr) {
+        if (capture_handle == nullptr)
+        {
             std::cout << "failed to initialize handle: " << error_buf << std::endl;
             this->error_message = error_buf;
             this->last_action_error = true;
@@ -64,8 +67,24 @@ namespace imshark::core::net
 
     std::vector<std::string> packet_manager::get_possible_devices()
     {
-        // todo
-        return std::vector<std::string>();
+        char error_buf[PCAP_ERRBUF_SIZE];
+        pcap_if_t* device_ptr;
+        auto devices_names = std::vector<std::string>();
+
+        if (pcap_findalldevs(&device_ptr, error_buf) == -1) {
+            std::cout << "failed to look up all devices: " << error_buf << std::endl;
+            this->error_message = error_buf;
+            this->last_action_error = true;
+            return devices_names;
+        }
+
+        while (device_ptr != nullptr)
+        {
+            devices_names.push_back(device_ptr->name);
+            device_ptr = device_ptr->next;
+        }
+
+        return devices_names;
     }
 
     std::string packet_manager::get_error_message()
@@ -84,9 +103,29 @@ namespace imshark::core::net
         this->last_action_error = false;
     }
 
-    std::string packet_manager::set_filter(std::string filter)
+    void packet_manager::set_filter(const std::string& filter)
     {
-        // todo
+        if (!capture_handle)
+        {
+            this->error_message = "You are not capturing packets";
+            this->last_action_error = true;
+            return;
+        }
+
+        bpf_program fp{};
+
+        if (pcap_compile(capture_handle, &fp, filter.c_str(), 0, PCAP_NETMASK_UNKNOWN) == -1) // todo
+        {
+            this->error_message = "Couldn't compile filter: " + std::string(pcap_geterr(capture_handle));
+            this->last_action_error = true;
+            return;
+        }
+
+        if (pcap_setfilter(capture_handle, &fp) == -1)
+        {
+            this->error_message = "Couldn't apply filter: " + std::string(pcap_geterr(capture_handle));
+            this->last_action_error = true;
+        }
     }
 
     std::vector<const u_char*> packet_manager::get_captured_packets()
