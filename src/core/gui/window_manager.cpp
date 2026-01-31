@@ -1,7 +1,6 @@
 #include "window_manager.h"
 
 #include "imgui.h"
-#include "../net/packet_manager.h"
 
 namespace imshark::core::gui
 {

@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include "pcap-int.h"
-
 namespace imshark::core::net
 {
     packet_manager* packet_manager::instance = nullptr;
@@ -80,7 +78,7 @@ namespace imshark::core::net
 
         while (device_ptr != nullptr)
         {
-            devices_names.push_back(device_ptr->name);
+            devices_names.emplace_back(device_ptr->name);
             device_ptr = device_ptr->next;
         }
 

@@ -41,6 +41,14 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(libpcap)
 
+FetchContent_Declare(
+        nlohmannjson
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.12.0
+)
+
+FetchContent_MakeAvailable(nlohmannjson)
+
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
@@ -60,6 +68,7 @@ add_executable(ImShark ${IMSHARK_SOURCES})
 
 target_include_directories(ImShark PRIVATE
         ${libpcap_SOURCE_DIR}
+        ${nlohmannjson_SOURCE_DIR}/single_include
 )
 
 target_link_libraries(ImShark PRIVATE
