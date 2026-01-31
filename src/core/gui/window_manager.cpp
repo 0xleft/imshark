@@ -18,8 +18,24 @@ namespace imshark::core::gui
 
     void window_manager::draw()
     {
-        ImGui::Begin("Diff viewer");
-        ImGui::Text("Diff viewer");
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+        ImGui::Begin("Main", nullptr,
+                     ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDecoration);
+
+        if (ImGui::BeginMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Open base")) {}
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("View")) {
+                if (ImGui::MenuItem("Draw")) {}
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+
+        ImGui::Text("Draw");
 
         ImGui::End();
     }

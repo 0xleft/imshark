@@ -15,11 +15,12 @@ int main()
     if (!glfwInit())
         return 1;
 
-    const float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
+    const float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()) * 1.3;
     GLFWwindow* window = glfwCreateWindow(static_cast<int>(1280 * main_scale), static_cast<int>(800 * main_scale),
                                           "ImShark", nullptr, nullptr);
     if (window == nullptr)
         return 1;
+
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 

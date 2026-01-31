@@ -9,10 +9,8 @@
 
 namespace imshark::core::net
 {
-    class packet_manager
+    class packet_receiver
     {
-        static packet_manager* instance;
-
         pcap_t* capture_handle = nullptr;
         std::thread capture_thread;
 
@@ -24,7 +22,6 @@ namespace imshark::core::net
         std::vector<const u_char*> captured_packet_list;
 
     public:
-        static packet_manager* get_instance();
         /**
          * @return true it successfully initialized, false otherwise
          */
@@ -39,7 +36,7 @@ namespace imshark::core::net
         std::vector<const u_char*> get_captured_packets();
         void clear_captured_packet_list();
 
-        ~packet_manager()
+        ~packet_receiver()
         {
             if (!capture_handle)
             {

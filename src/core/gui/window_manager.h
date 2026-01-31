@@ -1,6 +1,6 @@
 #ifndef IMSHARK_WINDOW_MANAGER_H
 #define IMSHARK_WINDOW_MANAGER_H
-#include "../net/packet_manager.h"
+#include "../net/packet_receiver.h"
 
 namespace imshark::core::gui
 {

@@ -1,26 +1,15 @@
-#include "packet_manager.h"
+#include "packet_receiver.h"
 
 #include <iostream>
 
 namespace imshark::core::net
 {
-    packet_manager* packet_manager::instance = nullptr;
-
-    packet_manager* packet_manager::get_instance()
-    {
-        if (instance == nullptr)
-        {
-            instance = new packet_manager{};
-        }
-        return instance;
-    }
-
-    bool packet_manager::is_receiving() const
+    bool packet_receiver::is_receiving() const
     {
         return this->receiving;
     }
 
-    void packet_manager::start_receiving(const std::string& device)
+    void packet_receiver::start_receiving(const std::string& device)
     {
         char error_buf[PCAP_ERRBUF_SIZE];
 
@@ -52,7 +41,7 @@ namespace imshark::core::net
         });
     }
 
-    void packet_manager::stop_receiving()
+    void packet_receiver::stop_receiving()
     {
         if (!receiving)
         {
@@ -63,7 +52,7 @@ namespace imshark::core::net
         this->capture_thread.join();
     }
 
-    std::vector<std::string> packet_manager::get_possible_devices()
+    std::vector<std::string> packet_receiver::get_possible_devices()
     {
         char error_buf[PCAP_ERRBUF_SIZE];
         pcap_if_t* device_ptr;
@@ -85,23 +74,23 @@ namespace imshark::core::net
         return devices_names;
     }
 
-    std::string packet_manager::get_error_message()
+    std::string packet_receiver::get_error_message()
     {
         return this->error_message;
     }
 
-    bool packet_manager::is_last_action_error() const
+    bool packet_receiver::is_last_action_error() const
     {
         return this->last_action_error;
     }
 
-    void packet_manager::clear_error_message()
+    void packet_receiver::clear_error_message()
     {
         this->error_message = "";
         this->last_action_error = false;
     }
 
-    void packet_manager::set_filter(const std::string& filter)
+    void packet_receiver::set_filter(const std::string& filter)
     {
         if (!capture_handle)
         {
@@ -126,12 +115,12 @@ namespace imshark::core::net
         }
     }
 
-    std::vector<const u_char*> packet_manager::get_captured_packets()
+    std::vector<const u_char*> packet_receiver::get_captured_packets()
     {
         return this->captured_packet_list;
     }
 
-    void packet_manager::clear_captured_packet_list()
+    void packet_receiver::clear_captured_packet_list()
     {
         this->packet_list_mtx.lock();
         this->captured_packet_list.clear();
