@@ -16,6 +16,16 @@ namespace imshark::core::gui
         return instance;
     }
 
+    std::vector<std::shared_ptr<net::packet_receiver>>& window_manager::get_packet_receivers()
+    {
+        return this->packet_receivers_;
+    }
+
+    gui_state& window_manager::get_gui_state()
+    {
+        return this->gui_state_;
+    }
+
     void window_manager::draw()
     {
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
@@ -23,16 +33,21 @@ namespace imshark::core::gui
         ImGui::Begin("Main", nullptr,
                      ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDecoration);
 
-        if (ImGui::BeginMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Open base")) {}
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("View")) {
-                if (ImGui::MenuItem("Draw")) {}
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
+        this->navbar_.draw();
+
+        switch (gui_state_)
+        {
+        case MAIN_FILTER:
+            this->main_filter_window_.draw();
+            break;
+        case CHOOSE_INTERFACES:
+            this->select_interface_window_.draw();
+            break;
+        }
+
+        for (auto& popup : this->packet_detail_popups_)
+        {
+            popup.draw();
         }
 
         ImGui::Text("Draw");

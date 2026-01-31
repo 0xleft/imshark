@@ -1,10 +1,14 @@
 #ifndef IMSHARK_SELECT_INTERFACE_H
 #define IMSHARK_SELECT_INTERFACE_H
 
+#include "drawable.h"
+
 namespace imshark::core::gui
 {
-    class select_interface
+    class select_interface_window : public drawable
     {
+    public:
+        void draw() override;
     };
 }
 
