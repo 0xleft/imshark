@@ -49,14 +49,14 @@ file(GLOB_RECURSE IMSHARK_SOURCES
         "src/*/*.cpp"
         "src/*/*/*.cpp"
         "src/*/*/*/*.cpp"
-
+        "src/*/*/*/*/*.cpp"
         "src/*.c"
         "src/*/*.c"
         "src/*/*/*.c"
         "src/*/*/*/*.c"
 )
 
-add_executable(ImShark src/exe/imshark.cpp)
+add_executable(ImShark ${IMSHARK_SOURCES})
 
 target_include_directories(ImShark PRIVATE
         ${libpcap_SOURCE_DIR}

@@ -4,6 +4,8 @@
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 
+#include "../core/gui/window_manager.h"
+
 int main()
 {
     const auto glsl_version = "#version 130";
@@ -15,7 +17,7 @@ int main()
 
     const float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
     GLFWwindow* window = glfwCreateWindow(static_cast<int>(1280 * main_scale), static_cast<int>(800 * main_scale),
-                                          "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+                                          "ImShark", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
@@ -47,7 +49,7 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // todo rendering
+        imshark::core::gui::window_manager::get_instance()->draw();
 
         // Rendering
         ImGui::Render();

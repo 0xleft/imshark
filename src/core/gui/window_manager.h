@@ -1,21 +1,17 @@
-//
-// Created by adomas on 31-01-2026.
-//
-
 #ifndef IMSHARK_WINDOW_MANAGER_H
 #define IMSHARK_WINDOW_MANAGER_H
+#include "../net/packet_manager.h"
 
-namespace imshark
+namespace imshark::core::gui
 {
-    namespace core
+    class window_manager
     {
-        namespace gui
-        {
-            class window_manager
-            {
-            };
-        } // gui
-    } // core
-} // imshark
+        static window_manager* instance;
+
+    public:
+        static window_manager* get_instance();
+        void draw();
+    };
+}
 
 #endif //IMSHARK_WINDOW_MANAGER_H

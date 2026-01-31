@@ -1,15 +1,27 @@
-//
-// Created by adomas on 31-01-2026.
-//
-
 #include "window_manager.h"
 
-namespace imshark
+#include "imgui.h"
+#include "../net/packet_manager.h"
+
+namespace imshark::core::gui
 {
-    namespace core
+    window_manager* window_manager::instance = nullptr;
+
+    window_manager* window_manager::get_instance()
     {
-        namespace gui
+        if (instance == nullptr)
         {
-        } // gui
-    } // core
-} // imshark
+            instance = new window_manager();
+        }
+
+        return instance;
+    }
+
+    void window_manager::draw()
+    {
+        ImGui::Begin("Diff viewer");
+        ImGui::Text("Diff viewer");
+
+        ImGui::End();
+    }
+}
