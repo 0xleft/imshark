@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "packet_parser.h"
+
 namespace imshark::core::net
 {
     bool packet_receiver::is_receiving() const
@@ -9,7 +11,7 @@ namespace imshark::core::net
         return this->receiving;
     }
 
-    void packet_receiver::start_receiving(const std::string& device)
+    int packet_receiver::start_receiving(const std::string& device)
     {
         char error_buf[PCAP_ERRBUF_SIZE];
 
@@ -23,8 +25,7 @@ namespace imshark::core::net
         {
             std::cout << "failed to initialize handle: " << error_buf << std::endl;
             this->error_message = error_buf;
-            this->last_action_error = true;
-            return;
+            return -1;
         }
 
         this->receiving = true;
@@ -33,45 +34,47 @@ namespace imshark::core::net
             while (receiving)
             {
                 pcap_pkthdr header{};
-                const u_char* packet = pcap_next(this->capture_handle, &header);
+                const u_char* data = pcap_next(this->capture_handle, &header);
                 this->packet_list_mtx.lock();
-                this->captured_packet_list.push_back(packet);
+                this->captured_packet_list.push_back(packet_parser::get_instance()->parse_packet(data));
                 this->packet_list_mtx.unlock();
             }
         });
+
+        return 0;
     }
 
-    void packet_receiver::stop_receiving()
+    int packet_receiver::stop_receiving()
     {
         if (!receiving)
         {
-            return;
+            return -1;
         }
 
         this->receiving = false;
         this->capture_thread.join();
+
+        return 0;
     }
 
-    std::vector<std::string> packet_receiver::get_possible_devices()
+    int packet_receiver::get_possible_devices(std::vector<std::string>& devices)
     {
         char error_buf[PCAP_ERRBUF_SIZE];
         pcap_if_t* device_ptr;
-        auto devices_names = std::vector<std::string>();
 
         if (pcap_findalldevs(&device_ptr, error_buf) == -1) {
             std::cout << "failed to look up all devices: " << error_buf << std::endl;
             this->error_message = error_buf;
-            this->last_action_error = true;
-            return devices_names;
+            return -1;
         }
 
         while (device_ptr != nullptr)
         {
-            devices_names.emplace_back(device_ptr->name);
+            devices.emplace_back(device_ptr->name);
             device_ptr = device_ptr->next;
         }
 
-        return devices_names;
+        return 0;
     }
 
     std::string packet_receiver::get_error_message()
@@ -79,24 +82,17 @@ namespace imshark::core::net
         return this->error_message;
     }
 
-    bool packet_receiver::is_last_action_error() const
-    {
-        return this->last_action_error;
-    }
-
     void packet_receiver::clear_error_message()
     {
         this->error_message = "";
-        this->last_action_error = false;
     }
 
-    void packet_receiver::set_filter(const std::string& filter)
+    int packet_receiver::set_filter(const std::string& filter)
     {
         if (!capture_handle)
         {
             this->error_message = "You are not capturing packets";
-            this->last_action_error = true;
-            return;
+            return -1;
         }
 
         bpf_program fp{};
@@ -104,18 +100,18 @@ namespace imshark::core::net
         if (pcap_compile(capture_handle, &fp, filter.c_str(), 0, PCAP_NETMASK_UNKNOWN) == -1) // todo
         {
             this->error_message = "Couldn't compile filter: " + std::string(pcap_geterr(capture_handle));
-            this->last_action_error = true;
-            return;
+            return -1;
         }
 
         if (pcap_setfilter(capture_handle, &fp) == -1)
         {
             this->error_message = "Couldn't apply filter: " + std::string(pcap_geterr(capture_handle));
-            this->last_action_error = true;
         }
+
+        return 0;
     }
 
-    std::vector<const u_char*> packet_receiver::get_captured_packets()
+    std::vector<packet> packet_receiver::get_captured_packets()
     {
         return this->captured_packet_list;
     }

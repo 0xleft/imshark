@@ -16,6 +16,11 @@ namespace imshark::core::gui
         return instance;
     }
 
+    std::vector<std::string>& window_manager::get_selected_devices()
+    {
+        return this->selected_devices;
+    }
+
     std::vector<std::shared_ptr<net::packet_receiver>>& window_manager::get_packet_receivers()
     {
         return this->packet_receivers_;
@@ -24,6 +29,11 @@ namespace imshark::core::gui
     gui_state& window_manager::get_gui_state()
     {
         return this->gui_state_;
+    }
+
+    void window_manager::set_gui_state(const gui_state new_state)
+    {
+        this->gui_state_ = new_state;
     }
 
     void window_manager::draw()
@@ -49,8 +59,6 @@ namespace imshark::core::gui
         {
             popup.draw();
         }
-
-        ImGui::Text("Draw");
 
         ImGui::End();
     }

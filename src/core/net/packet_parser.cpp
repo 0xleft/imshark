@@ -12,4 +12,19 @@ namespace imshark::core::net
         }
         return instance;
     }
+
+    void packet_parser::load_configs()
+    {
+    }
+
+    void packet_parser::load_configs(std::string path)
+    {
+    }
+
+    packet packet_parser::parse_packet(const u_char* data)
+    {
+        auto parsed_packet = packet{};
+
+        return parsed_packet;
+    }
 }

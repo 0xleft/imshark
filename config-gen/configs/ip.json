@@ -1,0 +1,59 @@
+{
+  "name": "ip",
+  "size": 160,
+  "depends_on": [],
+  "fields": [
+    {
+      "name": "version",
+      "size": 4
+    },
+    {
+      "name": "header length",
+      "size": 4
+    },
+    {
+      "name": "differentiated services codepoint",
+      "size": 6
+    },
+    {
+      "name": "explicit congestion notification",
+      "size": 2
+    },
+    {
+      "name": "total length",
+      "size": 16
+    },
+    {
+      "name": "identification",
+      "size": 16
+    },
+    {
+      "name": "flags",
+      "size": 3
+    },
+    {
+      "name": "dont fragment",
+      "size": 13
+    },
+    {
+      "name": "time to live",
+      "size": 8
+    },
+    {
+      "name": "protocol",
+      "size": 8
+    },
+    {
+      "name": "header checksum",
+      "size": 16
+    },
+    {
+      "name": "source address",
+      "size": 32
+    },
+    {
+      "name": "destination address",
+      "size": 32
+    }
+  ]
+}

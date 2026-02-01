@@ -1,0 +1,19 @@
+{
+  "name": "eth",
+  "size": 112,
+  "depends_on": [],
+  "fields": [
+    {
+      "name": "destination",
+      "size": 48
+    },
+    {
+      "name": "source",
+      "size": 48
+    },
+    {
+      "name": "type",
+      "size": 16
+    }
+  ]
+}
