@@ -8,6 +8,9 @@ namespace imshark::core::net
     struct packet
     {
         std::unordered_map<std::string, const u_char*> structured_data;
+        std::string top_protocol;
+        std::string src;
+        std::string dst;
     };
 }
 

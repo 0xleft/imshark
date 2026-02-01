@@ -22,6 +22,8 @@ namespace imshark::core::net
         std::string current_device;
         std::vector<packet> captured_packet_list;
 
+        std::vector<packet> filtered_packet_list;
+        std::string filter_str;
     public:
         /**
          * @return true it successfully initialized, false otherwise
@@ -32,8 +34,11 @@ namespace imshark::core::net
         int get_possible_devices(std::vector<std::string>& devices);
         std::string get_error_message();
         void clear_error_message();
-        int set_filter(const std::string& filter);
+        void set_filter(const std::string& filter);
+        bool does_fit_filter(packet& packet);
+        void filter_packets();
         std::vector<packet>& get_captured_packets();
+        std::vector<packet>& get_filtered_packets();
         void clear_captured_packet_list();
         std::string get_current_device();
 

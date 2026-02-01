@@ -21,7 +21,7 @@ namespace imshark::core::gui
                     {
                         packet_receiver->stop_receiving();
                         packet_receiver->start_receiving(packet_receiver->get_current_device());
-                        packet_receiver->get_captured_packets().clear();
+                        packet_receiver->clear_captured_packet_list();
                     }
                 }
 

@@ -40,7 +40,12 @@ namespace imshark::core::net
                 if (receiving)
                 {
                     this->packet_list_mtx.lock();
-                    this->captured_packet_list.push_back(packet_parser::get_instance()->parse_packet(data));
+                    auto packet = packet_parser::get_instance()->parse_packet(data);
+                    this->captured_packet_list.push_back(packet);
+                    if (does_fit_filter(packet))
+                    {
+                        this->filtered_packet_list.push_back(packet);
+                    }
                     this->packet_list_mtx.unlock();
                 }
             }
@@ -96,30 +101,39 @@ namespace imshark::core::net
         this->error_message = "";
     }
 
-    int packet_receiver::set_filter(const std::string& filter)
+    void packet_receiver::set_filter(const std::string& filter)
     {
+        if (filter == this->filter_str)
+        {
+            return;
+        }
+
+        this->filtered_packet_list.clear();
+        this->filter_str = filter;
         clear_error_message();
 
-        if (!capture_handle)
+        for (auto p : this->captured_packet_list)
         {
-            this->error_message = "You are not capturing packets";
-            return -1;
+            if (does_fit_filter(p))
+            {
+                this->filtered_packet_list.push_back(p);
+            }
         }
 
-        bpf_program fp{};
+        // todo
 
-        if (pcap_compile(capture_handle, &fp, filter.c_str(), 0, PCAP_NETMASK_UNKNOWN) == -1) // todo
-        {
-            this->error_message = "Couldn't compile filter: " + std::string(pcap_geterr(capture_handle));
-            return -1;
-        }
+        filter_packets();
+    }
 
-        if (pcap_setfilter(capture_handle, &fp) == -1)
-        {
-            this->error_message = "Couldn't apply filter: " + std::string(pcap_geterr(capture_handle));
-        }
+    bool packet_receiver::does_fit_filter(packet& packet)
+    {
+        // todo
+        return true;
+    }
 
-        return 0;
+    void packet_receiver::filter_packets()
+    {
+        // todo
     }
 
     std::vector<packet>& packet_receiver::get_captured_packets()
@@ -127,10 +141,16 @@ namespace imshark::core::net
         return this->captured_packet_list;
     }
 
+    std::vector<packet>& packet_receiver::get_filtered_packets()
+    {
+        return this->filtered_packet_list;
+    }
+
     void packet_receiver::clear_captured_packet_list()
     {
         this->packet_list_mtx.lock();
         this->captured_packet_list.clear();
+        this->filtered_packet_list.clear();
         this->packet_list_mtx.unlock();
     }
 

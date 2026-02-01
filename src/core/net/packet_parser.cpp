@@ -16,6 +16,7 @@ namespace imshark::core::net
     packet packet_parser::parse_packet(const u_char* data)
     {
         auto parsed_packet = packet{
+            {}, "tcp", "0.0.0.0", "0.0.0.0"
         };
 
         return parsed_packet;
