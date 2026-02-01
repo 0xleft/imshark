@@ -1,5 +1,7 @@
 #include "window_manager.h"
 
+#include <iostream>
+
 #include "imgui.h"
 
 namespace imshark::core::gui
@@ -16,14 +18,21 @@ namespace imshark::core::gui
         return instance;
     }
 
-    std::vector<std::string>& window_manager::get_selected_devices()
+    int window_manager::set_selected_device(const std::string& device)
     {
-        return this->selected_devices;
+        const auto new_receiver = std::make_shared<net::packet_receiver>();
+        this->packet_receiver_ = new_receiver;
+        if (new_receiver->start_receiving(device) == -1)
+        {
+            return -1;
+        }
+
+        return 0;
     }
 
-    std::vector<std::shared_ptr<net::packet_receiver>>& window_manager::get_packet_receivers()
+    std::shared_ptr<net::packet_receiver>& window_manager::get_packet_receiver()
     {
-        return this->packet_receivers_;
+        return this->packet_receiver_;
     }
 
     gui_state& window_manager::get_gui_state()
@@ -40,7 +49,7 @@ namespace imshark::core::gui
     {
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
         ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-        ImGui::Begin("Main", nullptr,
+        ImGui::Begin("main", nullptr,
                      ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDecoration);
 
         this->navbar_.draw();

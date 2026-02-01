@@ -1,8 +1,6 @@
 #ifndef IMSHARK_NAVBAR_H
 #define IMSHARK_NAVBAR_H
 
-#include <vector>
-
 #include "drawable.h"
 
 namespace imshark::core::gui

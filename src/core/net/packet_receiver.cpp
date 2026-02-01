@@ -13,6 +13,7 @@ namespace imshark::core::net
 
     int packet_receiver::start_receiving(const std::string& device)
     {
+        clear_error_message();
         char error_buf[PCAP_ERRBUF_SIZE];
 
         if (capture_handle)
@@ -29,15 +30,19 @@ namespace imshark::core::net
         }
 
         this->receiving = true;
+        this->current_device = device;
         this->capture_thread = std::thread([this]()
         {
             while (receiving)
             {
                 pcap_pkthdr header{};
                 const u_char* data = pcap_next(this->capture_handle, &header);
-                this->packet_list_mtx.lock();
-                this->captured_packet_list.push_back(packet_parser::get_instance()->parse_packet(data));
-                this->packet_list_mtx.unlock();
+                if (receiving)
+                {
+                    this->packet_list_mtx.lock();
+                    this->captured_packet_list.push_back(packet_parser::get_instance()->parse_packet(data));
+                    this->packet_list_mtx.unlock();
+                }
             }
         });
 
@@ -46,8 +51,10 @@ namespace imshark::core::net
 
     int packet_receiver::stop_receiving()
     {
+        clear_error_message();
         if (!receiving)
         {
+            error_message = "You are not receiving";
             return -1;
         }
 
@@ -59,10 +66,12 @@ namespace imshark::core::net
 
     int packet_receiver::get_possible_devices(std::vector<std::string>& devices)
     {
+        clear_error_message();
         char error_buf[PCAP_ERRBUF_SIZE];
         pcap_if_t* device_ptr;
 
-        if (pcap_findalldevs(&device_ptr, error_buf) == -1) {
+        if (pcap_findalldevs(&device_ptr, error_buf) == -1)
+        {
             std::cout << "failed to look up all devices: " << error_buf << std::endl;
             this->error_message = error_buf;
             return -1;
@@ -89,6 +98,8 @@ namespace imshark::core::net
 
     int packet_receiver::set_filter(const std::string& filter)
     {
+        clear_error_message();
+
         if (!capture_handle)
         {
             this->error_message = "You are not capturing packets";
@@ -111,7 +122,7 @@ namespace imshark::core::net
         return 0;
     }
 
-    std::vector<packet> packet_receiver::get_captured_packets()
+    std::vector<packet>& packet_receiver::get_captured_packets()
     {
         return this->captured_packet_list;
     }
@@ -121,5 +132,10 @@ namespace imshark::core::net
         this->packet_list_mtx.lock();
         this->captured_packet_list.clear();
         this->packet_list_mtx.unlock();
+    }
+
+    std::string packet_receiver::get_current_device()
+    {
+        return this->current_device;
     }
 }

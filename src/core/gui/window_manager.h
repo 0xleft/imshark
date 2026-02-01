@@ -22,13 +22,12 @@ namespace imshark::core::gui
         std::vector<packet_detail_popup> packet_detail_popups_;
         gui_state gui_state_ = CHOOSE_INTERFACES;
 
-        std::vector<std::string> selected_devices;
-        std::vector<std::shared_ptr<net::packet_receiver>> packet_receivers_;
+        std::shared_ptr<net::packet_receiver> packet_receiver_;
     public:
         static window_manager* get_instance();
 
-        std::vector<std::string>& get_selected_devices();
-        std::vector<std::shared_ptr<net::packet_receiver>>& get_packet_receivers();
+        int set_selected_device(const std::string& device);
+        std::shared_ptr<net::packet_receiver>& get_packet_receiver();
         gui_state& get_gui_state();
         void set_gui_state(gui_state new_state);
         void draw() override;

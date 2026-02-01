@@ -19,6 +19,7 @@ namespace imshark::core::net
         bool receiving = false;
 
         std::mutex packet_list_mtx;
+        std::string current_device;
         std::vector<packet> captured_packet_list;
 
     public:
@@ -32,8 +33,9 @@ namespace imshark::core::net
         std::string get_error_message();
         void clear_error_message();
         int set_filter(const std::string& filter);
-        std::vector<packet> get_captured_packets();
+        std::vector<packet>& get_captured_packets();
         void clear_captured_packet_list();
+        std::string get_current_device();
 
         ~packet_receiver()
         {
