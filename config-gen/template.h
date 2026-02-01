@@ -11,14 +11,14 @@ namespace imshark::core::configs
     struct config_field
     {
         std::string name;
-        size_t size;
+        int size;
     };
 
     struct config
     {
         std::string name;
         std::string depends_on;
-        size_t size;
+        int size;
         std::vector<config_field> fields;
     };
 

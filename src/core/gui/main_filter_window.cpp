@@ -7,8 +7,6 @@ namespace imshark::core::gui
 {
     void main_filter_window::draw()
     {
-        net::packet selected_packet;
-
         static char filter_str[1024] = "";
         ImGui::InputText("Filter", filter_str, IM_ARRAYSIZE(filter_str));
 
@@ -33,7 +31,7 @@ namespace imshark::core::gui
 
                 for (int i = 0; i < filtered_packets.size(); ++i)
                 {
-                    const auto& p = filtered_packets[i];
+                    auto& p = filtered_packets[i];
 
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);
@@ -47,7 +45,7 @@ namespace imshark::core::gui
                     ImGui::PushID(std::to_string(i).c_str());
                     if (ImGui::Button("View"))
                     {
-                        selected_packet = p;
+                        selected_packet = &p;
                     }
                     ImGui::PopID();
                 }
@@ -62,6 +60,22 @@ namespace imshark::core::gui
 
         ImGui::BeginChild("packet_dissect", ImVec2(avail.x * 0.4f, avail.y), true);
 
+        if (!selected_packet)
+        {
+            ImGui::Text("Select a packet to view and its details will be displayed here");
+        } else
+        {
+            ImGui::Text("Source: %s", selected_packet->src.c_str());
+            ImGui::Text("Destination: %s", selected_packet->dst.c_str());
+            ImGui::Text("Top protocol: %s", selected_packet->top_protocol.c_str());
+
+            // todo display raw hex data
+
+            for (const auto& feature : selected_packet->structured_data)
+            {
+                // todo
+            }
+        }
 
         ImGui::EndChild();
     }
