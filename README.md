@@ -1,4 +1,4 @@
-# imhasrk
+# imshark
 
 This project is mainly aimed at linux and all documentation will be provided in respect to that, however since cmake is being used it should work on other platforms aswell.
 
