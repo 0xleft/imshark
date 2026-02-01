@@ -5,11 +5,6 @@
 
 #include "drawable.h"
 
-namespace imshark::configs
-{
-    std::vector<
-}
-
 namespace imshark::core::gui
 {
     class navbar : public drawable

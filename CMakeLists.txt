@@ -69,6 +69,7 @@ add_executable(ImShark ${IMSHARK_SOURCES})
 target_include_directories(ImShark PRIVATE
         ${libpcap_SOURCE_DIR}
         ${nlohmannjson_SOURCE_DIR}/single_include
+        config-gen/include
 )
 
 target_link_libraries(ImShark PRIVATE

@@ -1,7 +1,7 @@
 {
   "name": "ip",
   "size": 160,
-  "depends_on": [],
+  "depends_on": "eth",
   "fields": [
     {
       "name": "version",
