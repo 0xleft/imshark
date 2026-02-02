@@ -18,11 +18,16 @@ namespace imshark::core::gui
         return instance;
     }
 
+    main_filter_window& window_manager::get_main_filter_window()
+    {
+        return this->main_filter_window_;
+    }
+
     int window_manager::set_selected_device(const std::string& device)
     {
         const auto new_receiver = std::make_shared<net::packet_receiver>();
         this->packet_receiver_ = new_receiver;
-        if (new_receiver->start_receiving(device) == -1)
+        if (new_receiver->start_receiving(device, this->main_filter_window_.get_selected_root_config()) == -1)
         {
             return -1;
         }
@@ -64,9 +69,9 @@ namespace imshark::core::gui
             break;
         }
 
-        for (auto& popup : this->packet_detail_popups_)
+        if (packet_send_popup_)
         {
-            popup.draw();
+            packet_send_popup_->draw();
         }
 
         ImGui::End();

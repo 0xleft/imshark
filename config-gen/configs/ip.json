@@ -1,5 +1,6 @@
 {
   "name": "ip",
+  "root": false,
   "size": 160,
   "depends_on": "eth",
   "fields": [

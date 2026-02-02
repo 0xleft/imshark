@@ -13,7 +13,7 @@ namespace imshark::core::net
     public:
         static packet_parser* get_instance();
 
-        packet parse_packet(const u_char* data);
+        static packet parse_packet(const u_char* data, const configs::config& root_layer_config);
     };
 }
 

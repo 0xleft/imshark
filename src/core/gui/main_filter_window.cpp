@@ -1,19 +1,43 @@
 #include "main_filter_window.h"
 
 #include "imgui.h"
+#include "packet_configs.h"
 #include "window_manager.h"
 
 namespace imshark::core::gui
 {
+    const configs::config& main_filter_window::get_selected_root_config()
+    {
+        return this->selected_root_config;
+    }
+
     void main_filter_window::draw()
     {
         static char filter_str[1024] = "";
         ImGui::InputText("Filter", filter_str, IM_ARRAYSIZE(filter_str));
 
+        ImGui::SameLine();
+
+        if (ImGui::TreeNode("Select link layer"))
+        {
+            for (const auto& config : configs::ROOT_PACKET_CONFIGS)
+            {
+                if (ImGui::Selectable(config.name.c_str(), selected_root_config == config))
+                {
+                    selected_root_config = config;
+                    window_manager::get_instance()->get_packet_receiver()->stop_receiving();
+                    window_manager::get_instance()->get_packet_receiver()->start_receiving(
+                        window_manager::get_instance()->get_packet_receiver()->get_current_device(), selected_root_config);
+                }
+            }
+
+            ImGui::TreePop();
+        }
+
         const ImVec2 avail = ImGui::GetContentRegionAvail();
         ImGui::BeginChild("packet_display", ImVec2(avail.x * 0.6f, avail.y), true);
 
-        if (auto packet_receiver = window_manager::get_instance()->get_packet_receiver())
+        if (const auto packet_receiver = window_manager::get_instance()->get_packet_receiver())
         {
             packet_receiver->set_filter(filter_str);
 
@@ -31,7 +55,7 @@ namespace imshark::core::gui
 
                 for (int i = 0; i < filtered_packets.size(); ++i)
                 {
-                    auto& p = filtered_packets[i];
+                    auto p = filtered_packets[i];
 
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);
@@ -45,8 +69,9 @@ namespace imshark::core::gui
                     ImGui::PushID(std::to_string(i).c_str());
                     if (ImGui::Button("View"))
                     {
-                        selected_packet = &p;
+                        selected_packet = std::make_shared<net::packet>(p);
                     }
+
                     ImGui::PopID();
                 }
 
@@ -63,7 +88,8 @@ namespace imshark::core::gui
         if (!selected_packet)
         {
             ImGui::Text("Select a packet to view and its details will be displayed here");
-        } else
+        }
+        else
         {
             ImGui::Text("Source: %s", selected_packet->src.c_str());
             ImGui::Text("Destination: %s", selected_packet->dst.c_str());

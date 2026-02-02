@@ -34,24 +34,40 @@ config{
 },
 """
 
-with open("include/packet_configs.h", "w+") as out_file:
+def compile_config(config):
     output = ""
 
-    for file in files:
-        output += "config{\"" + file["name"] + "\"," + ("\"\"" if file["depends_on"] == None else f"\"{file['depends_on']}\"") + "," + str(file["size"]) + ","
-        output += "std::vector<config_field>{"
+    output += "config{\"" + file["name"] + "\"," + ("\"\"" if file["depends_on"] == None else f"\"{file['depends_on']}\"") + "," + str(file["size"]) + ","
+    output += "std::vector<config_field>{"
 
-        # the fields
-        for field in file["fields"]:
-            output += "config_field{"
-            output += f"\"{field['name']}\"" + ","
-            output += str(field["size"])
-            output += "}"
-            if field != file["fields"][-1]:
-                output+=","
+    # the fields
+    for field in file["fields"]:
+        output += "config_field{"
+        output += f"\"{field['name']}\"" + ","
+        output += str(field["size"])
+        output += "}"
+        if field != file["fields"][-1]:
+            output+=","
 
-        output += "}}"
-        if file != files[-1]:
-            output += ","
+    output += "}}"
 
-    out_file.write(template.replace("REPLACE_CONFIGS", output))
+    return output
+
+with open("include/packet_configs.h", "w+") as out_file:
+    root_output = ""
+    normal_output = ""
+
+    roots = [f for f in files if f["root"]]
+    non_roots = [f for f in files if not f["root"]]
+
+    for file in roots:
+        root_output += compile_config(file)
+        if file != roots[-1]:
+            root_output += ","
+
+    for file in non_roots:
+        normal_output += compile_config(file)
+        if file != non_roots[-1]:
+            normal_output += ","
+
+    out_file.write(template.replace("REPLACE_CONFIGS", normal_output).replace("REPLACE_ROOT_CONFIGS", root_output))

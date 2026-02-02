@@ -20,10 +20,32 @@ namespace imshark::core::configs
         std::string depends_on;
         int size;
         std::vector<config_field> fields;
+
+        bool operator==(const config& config) const
+        {
+            if (fields.size() != config.fields.size())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < fields.size(); ++i)
+            {
+                if (fields[i].name != config.fields[i].name || fields[i].size != config.fields[i].size)
+                {
+                    return false;
+                }
+            }
+
+            return name == config.name && depends_on == config.depends_on && size == config.size;
+        }
     };
 
     static std::vector<config> PACKET_CONFIGS = {
-        config{"eth","",112,std::vector<config_field>{config_field{"destination",48},config_field{"source",48},config_field{"type",16}}},config{"ip","eth",160,std::vector<config_field>{config_field{"version",4},config_field{"header length",4},config_field{"differentiated services codepoint",6},config_field{"explicit congestion notification",2},config_field{"total length",16},config_field{"identification",16},config_field{"flags",3},config_field{"dont fragment",13},config_field{"time to live",8},config_field{"protocol",8},config_field{"header checksum",16},config_field{"source address",32},config_field{"destination address",32}}}
+        config{"ip","eth",160,std::vector<config_field>{config_field{"version",4},config_field{"header length",4},config_field{"differentiated services codepoint",6},config_field{"explicit congestion notification",2},config_field{"total length",16},config_field{"identification",16},config_field{"flags",3},config_field{"dont fragment",13},config_field{"time to live",8},config_field{"protocol",8},config_field{"header checksum",16},config_field{"source address",32},config_field{"destination address",32}}}
+    };
+
+    static std::vector<config> ROOT_PACKET_CONFIGS = {
+        config{"eth","",112,std::vector<config_field>{config_field{"destination",48},config_field{"source",48},config_field{"type",16}}}
     };
 }
 

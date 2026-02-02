@@ -13,14 +13,16 @@ namespace imshark::core::gui
         {
             if (ImGui::BeginMenu("Capture"))
             {
-                auto packet_receiver = window_manager::get_instance()->get_packet_receiver();
+                const auto packet_receiver = window_manager::get_instance()->get_packet_receiver();
 
                 if (ImGui::MenuItem("Restart"))
                 {
                     if (packet_receiver && window_manager::get_instance()->get_gui_state() == MAIN_FILTER)
                     {
                         packet_receiver->stop_receiving();
-                        packet_receiver->start_receiving(packet_receiver->get_current_device());
+                        packet_receiver->start_receiving(packet_receiver->get_current_device(),
+                                                         window_manager::get_instance()->get_main_filter_window().
+                                                         get_selected_root_config());
                         packet_receiver->clear_captured_packet_list();
                     }
                 }

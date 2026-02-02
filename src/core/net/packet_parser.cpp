@@ -13,7 +13,7 @@ namespace imshark::core::net
         return instance;
     }
 
-    packet packet_parser::parse_packet(const u_char* data)
+    packet packet_parser::parse_packet(const u_char* data, const configs::config& root_layer_config)
     {
         auto parsed_packet = packet{
             {}, "tcp", "0.0.0.0", "0.0.0.0"
