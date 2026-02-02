@@ -27,7 +27,7 @@ namespace imshark::core::gui
     {
         const auto new_receiver = std::make_shared<net::packet_receiver>();
         this->packet_receiver_ = new_receiver;
-        if (new_receiver->start_receiving(device, this->main_filter_window_.get_selected_root_config()) == -1)
+        if (new_receiver->start_receiving(device, main_filter_window_.get_selected_link_layer_config()) == -1)
         {
             return -1;
         }
@@ -56,6 +56,12 @@ namespace imshark::core::gui
         ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
         ImGui::Begin("main", nullptr,
                      ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDecoration);
+
+        if (executing_main_action.load())
+        {
+            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+            ImGui::ProgressBar(-1.0f * static_cast<float>(ImGui::GetTime()), ImVec2(0.0f, 0.0f), "Executing...");
+        }
 
         this->navbar_.draw();
 

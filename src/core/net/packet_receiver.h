@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "packet.h"
-#include "packet_configs.h"
+#include "../config/configs.h"
 #include "pcap/pcap.h"
 
 namespace imshark::core::net
@@ -30,7 +30,7 @@ namespace imshark::core::net
          * @return true it successfully initialized, false otherwise
          */
         [[nodiscard]] bool is_receiving() const;
-        int start_receiving(const std::string& device, const configs::config& root_layer_config);
+        int start_receiving(const std::string& device, config::link_layer_config link_layer_config);
         int stop_receiving();
         int get_possible_devices(std::vector<std::string>& devices);
         std::string get_error_message();

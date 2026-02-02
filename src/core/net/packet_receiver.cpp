@@ -11,7 +11,7 @@ namespace imshark::core::net
         return this->receiving;
     }
 
-    int packet_receiver::start_receiving(const std::string& device, const configs::config& root_layer_config)
+    int packet_receiver::start_receiving(const std::string& device, const config::link_layer_config link_layer_config)
     {
         clear_error_message();
         char error_buf[PCAP_ERRBUF_SIZE];
@@ -31,7 +31,7 @@ namespace imshark::core::net
 
         this->receiving = true;
         this->current_device = device;
-        this->capture_thread = std::thread([this, &root_layer_config]()
+        this->capture_thread = std::thread([this, &link_layer_config]()
         {
             while (receiving)
             {
@@ -40,7 +40,7 @@ namespace imshark::core::net
                 if (receiving)
                 {
                     this->packet_list_mtx.lock();
-                    auto packet = packet_parser::parse_packet(data, root_layer_config);
+                    auto packet = packet_parser::parse_packet(data, link_layer_config);
                     this->captured_packet_list.push_back(packet);
                     if (does_fit_filter(packet))
                     {

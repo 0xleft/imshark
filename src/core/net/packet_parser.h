@@ -2,7 +2,7 @@
 #define IMSHARK_PACKET_PARSER_H
 
 #include "packet.h"
-#include <packet_configs.h>
+#include "../config/configs.h"
 
 namespace imshark::core::net
 {
@@ -13,7 +13,7 @@ namespace imshark::core::net
     public:
         static packet_parser* get_instance();
 
-        static packet parse_packet(const u_char* data, const configs::config& root_layer_config);
+        static packet parse_packet(const u_char* data, config::link_layer_config link_layer_config);
     };
 }
 

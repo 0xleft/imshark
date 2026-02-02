@@ -1,38 +1,19 @@
 #include "main_filter_window.h"
 
 #include "imgui.h"
-#include "packet_configs.h"
 #include "window_manager.h"
 
 namespace imshark::core::gui
 {
-    const configs::config& main_filter_window::get_selected_root_config()
+    config::link_layer_config main_filter_window::get_selected_link_layer_config() const
     {
-        return this->selected_root_config;
+        return this->selected_link_layer_config_;
     }
 
     void main_filter_window::draw()
     {
         static char filter_str[1024] = "";
         ImGui::InputText("Filter", filter_str, IM_ARRAYSIZE(filter_str));
-
-        ImGui::SameLine();
-
-        if (ImGui::TreeNode("Select link layer"))
-        {
-            for (const auto& config : configs::ROOT_PACKET_CONFIGS)
-            {
-                if (ImGui::Selectable(config.name.c_str(), selected_root_config == config))
-                {
-                    selected_root_config = config;
-                    window_manager::get_instance()->get_packet_receiver()->stop_receiving();
-                    window_manager::get_instance()->get_packet_receiver()->start_receiving(
-                        window_manager::get_instance()->get_packet_receiver()->get_current_device(), selected_root_config);
-                }
-            }
-
-            ImGui::TreePop();
-        }
 
         const ImVec2 avail = ImGui::GetContentRegionAvail();
         ImGui::BeginChild("packet_display", ImVec2(avail.x * 0.6f, avail.y), true);

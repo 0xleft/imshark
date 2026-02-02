@@ -2,7 +2,7 @@
 #define IMSHARK_MAIN_FILTER_H
 
 #include "drawable.h"
-#include "packet_configs.h"
+#include "../config/configs.h"
 #include "../net/packet_receiver.h"
 
 namespace imshark::core::gui
@@ -10,15 +10,15 @@ namespace imshark::core::gui
     class main_filter_window : public drawable
     {
         std::shared_ptr<net::packet> selected_packet = nullptr;
-        configs::config selected_root_config;
+        config::link_layer_config selected_link_layer_config_;
 
     public:
         main_filter_window()
         {
-            selected_root_config = configs::ROOT_PACKET_CONFIGS[0];
+            selected_link_layer_config_ = config::ETH;
         }
 
-        const configs::config& get_selected_root_config();
+        [[nodiscard]] config::link_layer_config get_selected_link_layer_config() const;
         void draw() override;
     };
 }
